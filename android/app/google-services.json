@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "71702588390",
+    "project_id": "chefsafelasal",
+    "storage_bucket": "chefsafelasal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71702588390:android:e29d3ca385ab2390ba8427",
+        "android_client_info": {
+          "package_name": "org.lasalle.chefsafe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "71702588390-3n8k2nt587nkeh1b5th5682kuf90341r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmBg6WCVA8b7gTolTt05YNeIa2Dc-4UTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "71702588390-3n8k2nt587nkeh1b5th5682kuf90341r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
