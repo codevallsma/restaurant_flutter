@@ -101,11 +101,15 @@ class _SignupPageState extends State<SignIn> {
                             elevation: 7.0,
                             child: GestureDetector(
                               onTap: () {
-                                log('data: "he entrat"');
+                                log('data: "he entrat a login"');
                                 final api = context.read<ApiService>();
                                 UserSignIn signIn = UserSignIn(emailController.text.trim(), passwordController.text.trim());
-                                api.postLogin(signIn).then((value) => print(value.id_token)).catchError((onError){
-                                  print("cagada pastoret!");
+                                api.postLogin(signIn)
+                                .then((value){
+                                    //printem el valor del token id
+                                    print(value.id_token);
+                                    Navigator.pushNamedAndRemoveUntil(context, "/HomePage", (r) => false);
+                                }).catchError((onError){
                                   print(onError.toString());
                                 });
                               },
