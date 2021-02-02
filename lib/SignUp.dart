@@ -98,6 +98,7 @@ class _SignupPageState extends State<SignUp> {
                         color: Theme.of(context).primaryColor,
                         elevation: 7.0,
                         child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
                           onTap: () {
                             final api = context.read<ApiService>();
                             SignUpJson signup = SignUpJson(userName.text.trim(),emailController.text.trim(), passwordController.text.trim());

@@ -22,5 +22,7 @@ abstract class ApiService {
   Future<TokenGetter> postLogin(@Body() UserSignIn userSignIn);
   @POST("registration")
   Future<UserDetails> registerUser(@Body() SignUpJson post);
+  @GET("users")
+  Future<UserDetails> getUserDetails(@Query("id") String username,  @Header("Authorization") String header);
 
 }

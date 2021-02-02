@@ -14,5 +14,9 @@ class SingletonApiToken {
 
   String get token_Api => _token_Api;
 
+  String getTokenHeader(){
+    return "Bearer "+_token_Api ;
+  }
+
   SingletonApiToken._internal();
 }

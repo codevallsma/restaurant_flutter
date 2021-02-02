@@ -1,6 +1,7 @@
 import 'package:api_example/network/AuthData.dart';
 import 'package:api_example/network/api_service.dart';
 import 'package:api_example/network/model/SingletonApiToken.dart';
+import 'package:api_example/network/model/SingletonUserDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:api_example/Authentication/authentication_Service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -109,10 +110,26 @@ class _SignupPageState extends State<SignIn> {
                                 UserSignIn signIn = UserSignIn(emailController.text.trim(), passwordController.text.trim());
                                 api.postLogin(signIn)
                                 .then((token){
-                                    //printem el valor del token id
-                                    SingletonApiToken().setApiToken(token.id_token);
-                                    print(token.id_token);
+                                  SingletonApiToken().setApiToken(token.id_token);
+                                  print(token.id_token);
+                                  api.getUserDetails(emailController.text.trim(), SingletonApiToken().getTokenHeader())
+                                  .then((value) {
+                                    SingletonUserDetails.singleton
+                                        .setSingletonUserDetails(
+                                        value.id, value.email, value.username,
+                                        value.passwordConfirm);
+                                    //passem a la home principal un cop tinguem les dades del usuari
                                     Navigator.pushNamedAndRemoveUntil(context, "/HomePage", (r) => false);
+                                  }).catchError((onError){
+                                      Fluttertoast.showToast(
+                                          msg: "Error on receiving user data ",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          backgroundColor: Theme.of(context).primaryColor,
+                                          textColor: Colors.white,
+                                          timeInSecForIosWeb: 1
+                                      );
+                                    });
                                 }).catchError((onError){
                                   Fluttertoast.showToast(
                                       msg: "Wrong credentails or username!",
