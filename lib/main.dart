@@ -1,5 +1,7 @@
 import 'package:api_example/SignIn.dart';
 import 'package:api_example/SignUp.dart';
+import 'package:api_example/SplashScreen.dart';
+import 'package:api_example/nav.dart';
 import 'package:flutter/material.dart';
 
 import 'package:api_example/LoginOrSignUp.dart';
@@ -55,6 +57,8 @@ class MyApp extends StatelessWidget {
           // When navigating to the "/second" route, build the SecondScreen widget.
           '/SignUp': (context) => SignUp(),
           '/HomePage': (context) => HomePage(),
+          '/Nav': (context) => Nav(),
+          '/Splash': (context) => SplashScreen(),
         },
       ),
     );

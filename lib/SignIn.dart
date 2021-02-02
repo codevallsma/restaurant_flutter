@@ -119,7 +119,7 @@ class _SignupPageState extends State<SignIn> {
                                         value.id, value.email, value.username,
                                         value.passwordConfirm);
                                     //passem a la home principal un cop tinguem les dades del usuari
-                                    Navigator.pushNamedAndRemoveUntil(context, "/HomePage", (r) => false);
+                                    Navigator.pushNamedAndRemoveUntil(context, "/Splash", (r) => false);
                                   }).catchError((onError){
                                       Fluttertoast.showToast(
                                           msg: "Error on receiving user data ",
