@@ -1,7 +1,10 @@
 import 'package:api_example/network/AuthData.dart';
 import 'package:api_example/network/api_service.dart';
+import 'package:api_example/network/model/SingletonApiToken.dart';
+import 'package:api_example/network/model/SingletonUserDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:api_example/Authentication/authentication_Service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'dart:developer';
 
@@ -100,13 +103,42 @@ class _SignupPageState extends State<SignIn> {
                             color: Theme.of(context).primaryColor,
                             elevation: 7.0,
                             child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
                               onTap: () {
-                                log('data: "he entrat"');
+                                log('data: "he entrat a login"');
                                 final api = context.read<ApiService>();
                                 UserSignIn signIn = UserSignIn(emailController.text.trim(), passwordController.text.trim());
-                                api.postLogin(signIn).then((value) => print(value.id_token)).catchError((onError){
-                                  print("cagada pastoret!");
-                                  print(onError.toString());
+                                api.postLogin(signIn)
+                                .then((token){
+                                  SingletonApiToken().setApiToken(token.id_token);
+                                  print(token.id_token);
+                                  api.getUserDetails(emailController.text.trim(), SingletonApiToken().getTokenHeader())
+                                  .then((value) {
+                                    SingletonUserDetails.singleton
+                                        .setSingletonUserDetails(
+                                        value.id, value.email, value.username,
+                                        value.passwordConfirm);
+                                    //passem a la home principal un cop tinguem les dades del usuari
+                                    Navigator.pushNamedAndRemoveUntil(context, "/HomePage", (r) => false);
+                                  }).catchError((onError){
+                                      Fluttertoast.showToast(
+                                          msg: "Error on receiving user data ",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          backgroundColor: Theme.of(context).primaryColor,
+                                          textColor: Colors.white,
+                                          timeInSecForIosWeb: 1
+                                      );
+                                    });
+                                }).catchError((onError){
+                                  Fluttertoast.showToast(
+                                      msg: "Wrong credentails or username!",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Theme.of(context).primaryColor,
+                                      textColor: Colors.white,
+                                      timeInSecForIosWeb: 1
+                                  );
                                 });
                               },
                               child: Center(

@@ -6,16 +6,17 @@ part of 'SignUp.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-SignUp _$SignUpFromJson(Map<String, dynamic> json) {
-  return SignUp(
-    json['userName'] as String,
+SignUpJson _$SignUpJsonFromJson(Map<String, dynamic> json) {
+  return SignUpJson(
+    json['user'] as String,
     json['email'] as String,
     json['password'] as String,
   );
 }
 
-Map<String, dynamic> _$SignUpToJson(SignUp instance) => <String, dynamic>{
+Map<String, dynamic> _$SignUpJsonToJson(SignUpJson instance) =>
+    <String, dynamic>{
       'password': instance.password,
       'email': instance.email,
-      'userName': instance.userName,
+      'user': instance.user,
     };

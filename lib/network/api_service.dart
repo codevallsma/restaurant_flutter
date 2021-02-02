@@ -1,6 +1,7 @@
 import 'package:api_example/network/AuthData.dart';
 import 'package:api_example/network/SignUp.dart';
 import 'package:api_example/network/TokenGetter.dart';
+import 'package:api_example/network/UserDetails.dart';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:retrofit/retrofit.dart';
@@ -19,7 +20,9 @@ abstract class ApiService {
 
   @POST("login")
   Future<TokenGetter> postLogin(@Body() UserSignIn userSignIn);
-  @POST("/registration")
-  Future<SignUp> registerUser(@Body() SignUp post);
+  @POST("registration")
+  Future<UserDetails> registerUser(@Body() SignUpJson post);
+  @GET("users")
+  Future<UserDetails> getUserDetails(@Query("id") String username,  @Header("Authorization") String header);
 
 }

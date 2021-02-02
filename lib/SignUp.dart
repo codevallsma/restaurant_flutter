@@ -1,6 +1,11 @@
+import 'package:api_example/SignIn.dart';
+import 'package:api_example/network/SignUp.dart';
+import 'package:api_example/network/api_service.dart';
+import 'package:api_example/rutes.dart';
 import 'package:flutter/material.dart';
 import 'package:api_example/Authentication/authentication_Service.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:developer';
 
 class SignUp extends StatefulWidget {
@@ -11,7 +16,7 @@ class SignUp extends StatefulWidget {
 class _SignupPageState extends State<SignUp> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
+  final TextEditingController userName = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -74,6 +79,7 @@ class _SignupPageState extends State<SignUp> {
                   ),
                   SizedBox(height: 10.0),
                   TextField(
+                    controller: userName,
                     decoration: InputDecoration(
                         labelText: 'NICK NAME ',
                         labelStyle: TextStyle(
@@ -92,11 +98,26 @@ class _SignupPageState extends State<SignUp> {
                         color: Theme.of(context).primaryColor,
                         elevation: 7.0,
                         child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
                           onTap: () {
-                            context.read<AuthenticationService>().signUp(
-                            email: emailController.text.trim(),
-                            password: passwordController.text.trim(),
-                          );
+                            final api = context.read<ApiService>();
+                            SignUpJson signup = SignUpJson(userName.text.trim(),emailController.text.trim(), passwordController.text.trim());
+                            api.registerUser(signup)
+                                .then((value){
+                              //printem el valor del token id
+                              //print(value.id_token);
+                              Navigator.of(context).push(createRouteWithSlide(SignIn()));
+                            }).catchError((onError){
+                              Fluttertoast.showToast(
+                                  msg: "error!",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  backgroundColor: Theme.of(context).primaryColor,
+                                  textColor: Colors.white,
+                                  timeInSecForIosWeb: 1
+                              );
+                              print(onError.toString());
+                            });
                             },
                           child: Center(
                             child: Text(
