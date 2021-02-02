@@ -1,7 +1,9 @@
 import 'package:api_example/network/AuthData.dart';
 import 'package:api_example/network/api_service.dart';
+import 'package:api_example/network/model/SingletonApiToken.dart';
 import 'package:flutter/material.dart';
 import 'package:api_example/Authentication/authentication_Service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'dart:developer';
 
@@ -100,17 +102,26 @@ class _SignupPageState extends State<SignIn> {
                             color: Theme.of(context).primaryColor,
                             elevation: 7.0,
                             child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
                               onTap: () {
                                 log('data: "he entrat a login"');
                                 final api = context.read<ApiService>();
                                 UserSignIn signIn = UserSignIn(emailController.text.trim(), passwordController.text.trim());
                                 api.postLogin(signIn)
-                                .then((value){
+                                .then((token){
                                     //printem el valor del token id
-                                    print(value.id_token);
+                                    SingletonApiToken().setApiToken(token.id_token);
+                                    print(token.id_token);
                                     Navigator.pushNamedAndRemoveUntil(context, "/HomePage", (r) => false);
                                 }).catchError((onError){
-                                  print(onError.toString());
+                                  Fluttertoast.showToast(
+                                      msg: "Wrong credentails or username!",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Theme.of(context).primaryColor,
+                                      textColor: Colors.white,
+                                      timeInSecForIosWeb: 1
+                                  );
                                 });
                               },
                               child: Center(
