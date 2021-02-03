@@ -2,6 +2,7 @@ import 'package:api_example/ExplorePage.dart';
 import 'package:api_example/ProfilePage.dart';
 import 'package:api_example/SavedPage.dart';
 import 'package:api_example/SettingsPage.dart';
+import 'package:api_example/ui/profile/prrofile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:api_example/rutes.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ class _NavState extends State<Nav> {
   int _selectedIndex = 0;
   List<Widget> _widgetOptions = <Widget>[
     ExplorePage(),
-    ProfilePage(),
+    ProfileScreen(),
     SavedPage(),
   ];
 
