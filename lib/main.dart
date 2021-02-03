@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'package:api_example/LoginOrSignUp.dart';
 import 'package:api_example/primaryColors.dart';
-import 'package:api_example/HomePage.dart';
+import 'package:api_example/ExplorePage.dart';
 import 'package:api_example/Authentication/authentication_Service.dart';
 import 'package:api_example/network/api_service.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
           '/SignIn': (context) => SignIn(),
           // When navigating to the "/second" route, build the SecondScreen widget.
           '/SignUp': (context) => SignUp(),
-          '/HomePage': (context) => HomePage(),
+          '/ExplorePage': (context) => ExplorePage(),
           '/Nav': (context) => Nav(),
           '/Splash': (context) => SplashScreen(),
         },
@@ -71,8 +71,9 @@ class AuthenticationWrapper extends StatelessWidget {
     final firebaseUser = context.watch<User>();
     log('data: $firebaseUser');
     if (firebaseUser != null) {
-      return HomePage();
+      return ExplorePage();
     }
     return LoginOrSignUp();
   }
 }
+

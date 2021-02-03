@@ -9,7 +9,7 @@ part of 'api_service.dart';
 class _ApiService implements ApiService {
   _ApiService(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.1.45:8080/';
+    baseUrl ??= 'http://10.0.2.2:8080/';
   }
 
   final Dio _dio;

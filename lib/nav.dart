@@ -1,5 +1,11 @@
-import 'package:api_example/HomePage.dart';
+import 'package:api_example/ExplorePage.dart';
+import 'package:api_example/ProfilePage.dart';
+import 'package:api_example/SavedPage.dart';
+import 'package:api_example/SettingsPage.dart';
 import 'package:flutter/material.dart';
+import 'package:api_example/rutes.dart';
+import 'package:provider/provider.dart';
+import 'package:api_example/Authentication/authentication_Service.dart';
 
 class Nav extends StatefulWidget {
   @override
@@ -9,9 +15,9 @@ class Nav extends StatefulWidget {
 class _NavState extends State<Nav> {
   int _selectedIndex = 0;
   List<Widget> _widgetOptions = <Widget>[
-    HomePage(),
-    Text('Messages Screen'),
-    Text('Profile Screen'),
+    ExplorePage(),
+    ProfilePage(),
+    SavedPage(),
   ];
 
   void _onItemTap(int index) {
@@ -24,7 +30,23 @@ class _NavState extends State<Nav> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bottom Navigation Bar Tutorial'),
+        centerTitle: true,
+        title: Text('ChefSafeNew'),
+        leading: new IconButton(
+            icon: new Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(createRouteWithSlide(SettingsPage()));
+            }),
+        actions: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: new IconButton(
+                icon: new Icon(Icons.logout),
+                onPressed: () {
+                  context.read<AuthenticationService>().signOut();
+                }),
+          )
+        ],
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -33,18 +55,10 @@ class _NavState extends State<Nav> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home,
+              Icons.location_on,
             ),
             title: Text(
-              'Home',
-            ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.message,
-            ),
-            title: Text(
-              'Messages',
+              'Explore',
             ),
           ),
           BottomNavigationBarItem(
@@ -53,6 +67,14 @@ class _NavState extends State<Nav> {
             ),
             title: Text(
               'Profile',
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.inbox,
+            ),
+            title: Text(
+              'Saved',
             ),
           ),
         ],
