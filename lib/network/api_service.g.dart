@@ -72,4 +72,72 @@ class _ApiService implements ApiService {
     final value = UserDetails.fromJson(_result.data);
     return value;
   }
+
+  @override
+  Future<List<AutoCompleteRestaurant>> getRestaurantNameAutocomplete(
+      restaurantName, header) async {
+    ArgumentError.checkNotNull(restaurantName, 'restaurantName');
+    ArgumentError.checkNotNull(header, 'header');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'restaurantName': restaurantName
+    };
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<List<dynamic>>('restaurant/autocomplete',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': header},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) =>
+            AutoCompleteRestaurant.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<List<CategoriaResultAll>> getAllCategories(header) async {
+    ArgumentError.checkNotNull(header, 'header');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<List<dynamic>>('category',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': header},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) =>
+            CategoriaResultAll.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<List<Restaurant>> getRestaurantsGivenCategory(
+      restaurantName, header) async {
+    ArgumentError.checkNotNull(restaurantName, 'restaurantName');
+    ArgumentError.checkNotNull(header, 'header');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'category': restaurantName};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<List<dynamic>>('restaurant',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': header},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) => Restaurant.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
 }
