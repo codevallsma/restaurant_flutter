@@ -32,8 +32,7 @@ class _ExplorePage extends State<ExplorePage> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
-      ..addListener(_onScroll);
+    _getMarkers();
   }
 
 
@@ -61,7 +60,7 @@ class _ExplorePage extends State<ExplorePage> {
   moveCamera() {
     mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: restaurants[_pageController.page.toInt()].locationCords(),
-        zoom: 50.0,
+        zoom: 16.0,
         bearing: 45.0,
         tilt: 45.0)));
   }
@@ -173,19 +172,12 @@ class _ExplorePage extends State<ExplorePage> {
             child: Container(
               height: 200.0,
               width: MediaQuery.of(context).size.width,
-              child: FutureBuilder(
-                    future: _getMarkers(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot){
-                      _getCurrentLocation();
-
-                      return PageView.builder(
-                        controller: _pageController,
-                        itemCount: restaurants.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return _coffeeShopList(index);
-                        },
-                      );
-                    },
+              child:PageView.builder(
+                controller: _pageController,
+                itemCount: restaurants.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _coffeeShopList(index);
+                },
               ),
             ),
           ),
@@ -230,9 +222,6 @@ class _ExplorePage extends State<ExplorePage> {
   }
 
   _getMarkers() async {
-    setState(() {
-
-    });
     _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
       _currentPosition = value;
       restaurants = [];
@@ -251,6 +240,8 @@ class _ExplorePage extends State<ExplorePage> {
           // storing the nearby restaurants
           restaurants.add(restaurant);
         });
+        _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
+          ..addListener(_onScroll);
       }).catchError((onError){
         Fluttertoast.showToast(
             msg: "Error on receiving user data ",
