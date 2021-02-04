@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:api_example/network/AuthData.dart';
 import 'package:api_example/network/AutoCompleteRestaurant.dart';
 import 'package:api_example/network/CategoriaResultAll.dart';
@@ -39,5 +41,8 @@ abstract class ApiService {
   // gets all the restaurants given category
   @GET("restaurant")
   Future<List<Restaurant>> getRestaurantsGivenCategory(@Query("category") String restaurantName,  @Header("Authorization") String header);
+
+  @GET("restaurant/knn")
+  Future<List<Restaurant>> getKNearestRestaurasnts(@Query("lat") Double latitude, @Query("lng") Double longitude,  @Query("num_restaurants") int num_restaurants,@Header("Authorization") String header);
 
 }

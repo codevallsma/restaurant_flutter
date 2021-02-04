@@ -140,4 +140,32 @@ class _ApiService implements ApiService {
         .toList();
     return value;
   }
+
+  @override
+  Future<List<Restaurant>> getKNearestRestaurasnts(
+      latitude, longitude, num_restaurants, header) async {
+    ArgumentError.checkNotNull(latitude, 'latitude');
+    ArgumentError.checkNotNull(longitude, 'longitude');
+    ArgumentError.checkNotNull(num_restaurants, 'num_restaurants');
+    ArgumentError.checkNotNull(header, 'header');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'lat': latitude,
+      r'lng': longitude,
+      r'num_restaurants': num_restaurants
+    };
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<List<dynamic>>('restaurant/knn',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': header},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) => Restaurant.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
 }
