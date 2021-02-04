@@ -6,6 +6,7 @@ import 'package:api_example/network/CategoriaResultAll.dart';
 import 'package:api_example/network/Restaurant.dart';
 import 'package:api_example/network/SignUp.dart';
 import 'package:api_example/network/TokenGetter.dart';
+
 import 'package:api_example/network/UserDetails.dart';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -49,7 +50,7 @@ abstract class ApiService {
 
   // gets the k nearest restaurants
   @GET("restaurant/knn")
-  Future<List<Restaurant>> getKNearestRestaurants(@Query("lat") Double latitude, @Query("lng") Double longitude,  @Query("num_restaurants") int num_restaurants,@Header("Authorization") String header);
+  Future<List<Restaurant>> getKNearestRestaurants(@Query("lat") double latitude, @Query("lng") double longitude,  @Query("num_restaurants") int num_restaurants,@Header("Authorization") String header);
 
   //get categories given a restaurant id
   @GET("restaurantByCategory/{id}")
