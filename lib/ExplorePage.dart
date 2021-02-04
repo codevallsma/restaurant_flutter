@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:api_example/network/api_service.dart';
+import 'package:api_example/network/model/SingletonApiToken.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:floating_search_bar/floating_search_bar.dart';
 import 'package:flutter/services.dart';
 
@@ -19,7 +22,6 @@ class _ExplorePage extends State<ExplorePage> {
   MapType _defaultMapType = MapType.normal;
   GoogleMapController mapController;
   Completer<GoogleMapController> _controller = Completer();
-
   Position _currentPosition;
 
   @override
@@ -30,10 +32,11 @@ class _ExplorePage extends State<ExplorePage> {
 
   _getCurrentLocation() async {
     _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
+      _currentPosition = value;
       mapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
-              target: LatLng(value.latitude, value.longitude), zoom: 16.0),
+              target: LatLng(_currentPosition.latitude, _currentPosition.longitude), zoom: 16.0),
         ),
       );
     });
