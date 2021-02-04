@@ -10,7 +10,7 @@ class Restaurant {
   int id;
   String ocupacio;
   String emplacamament;
-  int superficieOcupada;
+  double superficieOcupada;
   int taules;
   int cadires;
   double latitud;

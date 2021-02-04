@@ -11,7 +11,7 @@ Restaurant _$RestaurantFromJson(Map<String, dynamic> json) {
     id: json['id'] as int,
     ocupacio: json['ocupacio'] as String,
     emplacamament: json['emplacamament'] as String,
-    superficieOcupada: json['superficieOcupada'] as int,
+    superficieOcupada: (json['superficieOcupada'] as num)?.toDouble(),
     taules: json['taules'] as int,
     cadires: json['cadires'] as int,
     latitud: (json['latitud'] as num)?.toDouble(),
