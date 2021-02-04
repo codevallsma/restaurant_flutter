@@ -26,23 +26,33 @@ abstract class ApiService {
   //returns the jwt in order to access restringed zones in our api
   @POST("login")
   Future<TokenGetter> postLogin(@Body() UserSignIn userSignIn);
+
   // registers new users
   @POST("registration")
   Future<UserDetails> registerUser(@Body() SignUpJson post);
+
   //gets all the user details
   @GET("users")
   Future<UserDetails> getUserDetails(@Query("id") String username,  @Header("Authorization") String header);
+
   //autocomplete name restaurants
   @GET("restaurant/autocomplete")
   Future<List<AutoCompleteRestaurant>> getRestaurantNameAutocomplete(@Query("restaurantName") String restaurantName,  @Header("Authorization") String header);
+
   //gets all the category names
   @GET("category")
   Future<List<CategoriaResultAll>> getAllCategories(@Header("Authorization") String header);
+
   // gets all the restaurants given category
   @GET("restaurant")
   Future<List<Restaurant>> getRestaurantsGivenCategory(@Query("category") String restaurantName,  @Header("Authorization") String header);
 
+  // gets the k nearest restaurants
   @GET("restaurant/knn")
-  Future<List<Restaurant>> getKNearestRestaurasnts(@Query("lat") Double latitude, @Query("lng") Double longitude,  @Query("num_restaurants") int num_restaurants,@Header("Authorization") String header);
+  Future<List<Restaurant>> getKNearestRestaurants(@Query("lat") Double latitude, @Query("lng") Double longitude,  @Query("num_restaurants") int num_restaurants,@Header("Authorization") String header);
+
+  //get categories given a restaurant id
+  @GET("restaurantByCategory/{id}")
+  Future<List<CategoriaResultAll>> getCategoriesFromRestaurantId(@Path() int id);
 
 }
