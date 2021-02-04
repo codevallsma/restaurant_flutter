@@ -170,8 +170,10 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<List<CategoriaResultAll>> getCategoriesFromRestaurantId(id) async {
+  Future<List<CategoriaResultAll>> getCategoriesFromRestaurantId(
+      id, header) async {
     ArgumentError.checkNotNull(id, 'id');
+    ArgumentError.checkNotNull(header, 'header');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -180,13 +182,106 @@ class _ApiService implements ApiService {
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
-            headers: <String, dynamic>{},
+            headers: <String, dynamic>{r'Authorization': header},
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
     var value = _result.data
         .map((dynamic i) =>
             CategoriaResultAll.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<List<Restaurant>> getLikedRestaurants(userId, header) async {
+    ArgumentError.checkNotNull(userId, 'userId');
+    ArgumentError.checkNotNull(header, 'header');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<List<dynamic>>('restaurantLikes/$userId',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': header},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) => Restaurant.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<List<Restaurant>> getLikedRestaurantsByCategory(
+      userId, categoryID, header) async {
+    ArgumentError.checkNotNull(userId, 'userId');
+    ArgumentError.checkNotNull(categoryID, 'categoryID');
+    ArgumentError.checkNotNull(header, 'header');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'categoryID': categoryID};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<List<dynamic>>(
+        'restaurantLikesCategory/$userId',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{r'Authorization': header},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) => Restaurant.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<List<Restaurant>> postLikedRestaurant(
+      userId, restaurantID, header) async {
+    ArgumentError.checkNotNull(userId, 'userId');
+    ArgumentError.checkNotNull(restaurantID, 'restaurantID');
+    ArgumentError.checkNotNull(header, 'header');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<List<dynamic>>(
+        'restaurantLikes/$userId/$restaurantID',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{r'Authorization': header},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) => Restaurant.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<List<Restaurant>> deleteLikedRestaurant(
+      userId, restaurantID, header) async {
+    ArgumentError.checkNotNull(userId, 'userId');
+    ArgumentError.checkNotNull(restaurantID, 'restaurantID');
+    ArgumentError.checkNotNull(header, 'header');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<List<dynamic>>(
+        'restaurantLikes/$userId/$restaurantID',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'DELETE',
+            headers: <String, dynamic>{r'Authorization': header},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) => Restaurant.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
   }
