@@ -27,9 +27,26 @@ class _ExplorePage extends State<ExplorePage> {
   @override
   void initState() {
     super.initState();
+    _markers.add(Marker(
+        markerId: MarkerId('myMarker'),
+        draggable: true,
+        onTap: () {
+          print('Marker Tapped');
+        },
+        position: LatLng(41.412372, 2.161697)));
     _getCurrentLocation();
   }
 
+  void getMarkers(){
+    Provider.of<ApiService>(context, listen: false)
+        .getKNearestRestaurants(_currentPosition.latitude, _currentPosition.longitude,4, SingletonApiToken().getTokenHeader())
+        .then((value){
+
+        });
+  }
+  _onMarkersRecieved(){
+
+  }
   _getCurrentLocation() async {
     _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
       _currentPosition = value;
