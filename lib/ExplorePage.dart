@@ -17,6 +17,7 @@ class _ExplorePage extends State<ExplorePage> {
   final double _zoom = 10;
   CameraPosition _initialPosition = CameraPosition(target: LatLng(41.390205, 2.154007), zoom: 10);
   MapType _defaultMapType = MapType.normal;
+  GoogleMapController mapController;
   Completer<GoogleMapController> _controller = Completer();
 
   Position _currentPosition;
@@ -28,13 +29,18 @@ class _ExplorePage extends State<ExplorePage> {
   }
 
   _getCurrentLocation() async {
-    _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((value){
-      //TODO: Modificar posició càmera
+    _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+              target: LatLng(value.latitude, value.longitude), zoom: 16.0),
+        ),
+      );
     });
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    _controller.complete(controller);
+    mapController=controller;
   }
 
   void _changeMapType() {
