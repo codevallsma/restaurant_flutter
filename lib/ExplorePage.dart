@@ -28,11 +28,15 @@ class _ExplorePage extends State<ExplorePage> {
   PageController _pageController;
   int prevPage;
   List<Restaurant> restaurants = [];
+  Future<List<Restaurant>> restaurantList;
 
   @override
   void initState() {
     super.initState();
-    _getMarkers();
+    //_getMarkers();
+    _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
+      ..addListener(_onScroll);
+    submit();
   }
 
 
@@ -63,6 +67,19 @@ class _ExplorePage extends State<ExplorePage> {
         zoom: 16.0,
         bearing: 45.0,
         tilt: 45.0)));
+  }
+  void submit() async {
+    _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
+      _currentPosition = value;
+      restaurants = [];
+      this._markers.clear();
+      Future<List<Restaurant>> restas = Provider.of<ApiService>(context, listen: false)
+          .getKNearestRestaurants(_currentPosition.latitude, _currentPosition.longitude,4, SingletonApiToken().getTokenHeader());
+      setState(() {
+        restaurantList = restas;
+      });
+      return;
+    });
   }
   _coffeeShopList(index) {
     return AnimatedBuilder(
@@ -172,13 +189,21 @@ class _ExplorePage extends State<ExplorePage> {
             child: Container(
               height: 200.0,
               width: MediaQuery.of(context).size.width,
-              child:PageView.builder(
-                controller: _pageController,
-                itemCount: restaurants.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _coffeeShopList(index);
-                },
-              ),
+              child:restaurantList ==null ? Container(
+                              alignment: FractionalOffset.center,
+                              child: CircularProgressIndicator())
+                  : FutureBuilder<List<Restaurant>>(
+                  future: restaurantList,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return _buildResults(snapshot.data.toList());
+                    } else {
+                      return Container(
+                          alignment: FractionalOffset.center,
+                          child: CircularProgressIndicator());
+                    }
+                  }),
+
             ),
           ),
           Container(
@@ -221,6 +246,16 @@ class _ExplorePage extends State<ExplorePage> {
     );
   }
 
+  PageView _buildResults(List<Restaurant> restaurantResults){
+    restaurants = restaurantResults;
+    return PageView.builder(
+      controller: _pageController,
+      itemCount: restaurants.length,
+      itemBuilder: (BuildContext context, int index) {
+        return _coffeeShopList(index);
+      },
+    );
+  }
   _getMarkers() async {
     _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
       _currentPosition = value;
