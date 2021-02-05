@@ -70,6 +70,6 @@ abstract class ApiService {
 
   // deletes the liked restaurant
   @DELETE("restaurantLikes/{userID}/{restaurantID}")
-  Future<List<Restaurant>> deleteLikedRestaurant(@Path("userID") int userId,@Path("restaurantID") int restaurantID, @Header("Authorization") String header);
+  Future<void> deleteLikedRestaurant(@Path("userID") int userId,@Path("restaurantID") int restaurantID, @Header("Authorization") String header);
 
 }
