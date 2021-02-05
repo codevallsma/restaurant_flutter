@@ -9,6 +9,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
+import 'network/model/SingletonUserDetails.dart';
+
 
 class ExplorePage extends StatefulWidget {
   @override
@@ -26,7 +28,11 @@ class _ExplorePage extends State<ExplorePage> {
   PageController _pageController;
   int prevPage;
   List<Restaurant> restaurants = [];
+
   Future<List<Restaurant>> restaurantList;
+
+  bool isPressed = false;
+  Icon icona = new Icon(Icons.star_border);
 
   @override
   void initState() {
@@ -35,6 +41,21 @@ class _ExplorePage extends State<ExplorePage> {
     _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
       ..addListener(_onScroll);
     submit();
+
+    Provider.of<ApiService>(context, listen: false)
+        .getLikedRestaurants(
+        SingletonUserDetails().id, SingletonApiToken().getTokenHeader())
+        .then((sitesList) {
+      for (int i = 0; i < sitesList.length; i++) {
+        if (sitesList[i].id == restaurants[i].id) {
+          isPressed = true;
+          setState(() {
+            icona = new Icon(Icons.star);
+          });
+          break;
+        }
+      }
+    });
   }
 
 
@@ -147,12 +168,15 @@ class _ExplorePage extends State<ExplorePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  restaurants[index].restaurantName,
-                                  style: TextStyle(
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                                Row(children: [
+                                  Text(
+                                    restaurants[index].restaurantName,
+                                    style: TextStyle(
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  IconButton(icon: icona, onPressed: () => _buttonPressed(index)),
+                                ],),
                                 Text(
                                   restaurants[index].emplacamament,
                                   style: TextStyle(
@@ -169,7 +193,6 @@ class _ExplorePage extends State<ExplorePage> {
                                   ),
                                 )
                               ])
-
                           )
                         ]))))
           ])),
@@ -235,8 +258,45 @@ class _ExplorePage extends State<ExplorePage> {
     );
   }
 
+  _buttonPressed(int index) {
+    isPressed = !isPressed;
+    if (isPressed) {
+      setState(() {
+        icona = new Icon(Icons.star);
+      });
+      Provider.of<ApiService>(context, listen: false).postLikedRestaurant(
+          SingletonUserDetails().id,
+          this.restaurants[index].id,
+          SingletonApiToken().getTokenHeader());
+    } else {
+      setState(() {
+        icona = new Icon(Icons.star_border);
+      });
+      Provider.of<ApiService>(context, listen: false).deleteLikedRestaurant(
+          SingletonUserDetails().id,
+          this.restaurants[index].id,
+          SingletonApiToken().getTokenHeader());
+    }
+  }
+
   PageView _buildResults(List<Restaurant> restaurantResults){
     restaurants = restaurantResults;
+
+    Provider.of<ApiService>(context, listen: false)
+        .getLikedRestaurants(
+        SingletonUserDetails().id, SingletonApiToken().getTokenHeader())
+        .then((sitesList) {
+      for (int i = 0; i < sitesList.length; i++) {
+        if (sitesList[i].id == restaurants[i].id) {
+          isPressed = true;
+          setState(() {
+            icona = new Icon(Icons.star);
+          });
+          break;
+        }
+      }
+    });
+
     restaurantResults.forEach((restaurant) {
       //adding the marker
       this._markers.add(Marker(

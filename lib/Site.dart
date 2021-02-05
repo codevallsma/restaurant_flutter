@@ -82,7 +82,7 @@ class _Site extends State<Site> {
             title: Text('${this.nomRestaurant}'),
             subtitle: Text('${this.emplacament}'),
             leading: printLeading(),
-            trailing: IconButton(icon: icona, onPressed: _buttonPressed()),
+            trailing: IconButton(icon: icona, onPressed: () => _buttonPressed()),
           ),
 
           // Usamos una fila para ordenar los botones del card
@@ -116,7 +116,6 @@ class _Site extends State<Site> {
       setState(() {
         icona = new Icon(Icons.star_border);
       });
-      icona = new Icon(Icons.star_border);
       Provider.of<ApiService>(context, listen: false).deleteLikedRestaurant(
           SingletonUserDetails().id,
           this.id,
@@ -132,42 +131,4 @@ class _Site extends State<Site> {
     }
   }
 
-/*
-  IconButton printTrailing(BuildContext context) {
-    Icon icona = new Icon(Icons.star);
-    Provider.of<ApiService>(context, listen: false)
-        .getLikedRestaurants(
-            SingletonUserDetails().id, SingletonApiToken().getTokenHeader())
-        .then((sitesList) {
-      for (int i = 0; i < sitesList.length; i++) {
-        if (sitesList[i].id == this.id) {
-          icona = new Icon(Icons.star);
-          return IconButton(
-              icon: icona,
-              onPressed: () {
-                setState(() {
-                  icona = new Icon(Icons.star_border);
-                });
-                Provider.of<ApiService>(context, listen: false)
-                    .deleteLikedRestaurant(SingletonUserDetails().id, this.id,
-                        SingletonApiToken().getTokenHeader())
-                    .then((value) => null);
-              });
-        } else {
-          icona = new Icon(Icons.star_border);
-          return IconButton(
-              icon: icona,
-              onPressed: () {
-                setState(() {
-                  icona = new Icon(Icons.star);
-                });
-                Provider.of<ApiService>(context, listen: false)
-                    .postLikedRestaurant(SingletonUserDetails().id, this.id,
-                        SingletonApiToken().getTokenHeader())
-                    .then((value) => null);
-              });
-        }
-      }
-    });
-  }*/
 }
