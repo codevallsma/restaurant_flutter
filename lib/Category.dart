@@ -8,6 +8,36 @@ class Category extends StatelessWidget{
 
   @override
   Widget build(BuildContext buildContext){
+    return InkWell(
+      onTap: () => print('Card tapped'),
+      child: Card(
+        // Con esta propiedad modificamos la forma de nuestro card
+        // Aqui utilizo RoundedRectangleBorder para proporcionarle esquinas circulares al Card
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+
+        // Con esta propiedad agregamos margen a nuestro Card
+        // El margen es la separación entre widgets o entre los bordes del widget padre e hijo
+        margin: EdgeInsets.all(15),
+
+        // Con esta propiedad agregamos elevación a nuestro card
+        // La sombra que tiene el Card aumentará
+        elevation: 10,
+
+        // La propiedad child anida un widget en su interior
+        // Usamos columna para ordenar un ListTile y una fila con botones
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            
+            // Usamos ListTile para ordenar la información del card como titulo, subtitulo e icono
+            ListTile(
+              contentPadding: EdgeInsets.fromLTRB(15, 10, 25, 0),
+              title: new Center(child: new Text('${this.categoria}')),
+            ),
+          ],
+        ),
+      )
+    );
     return Card(
 
       // Con esta propiedad modificamos la forma de nuestro card
@@ -25,14 +55,17 @@ class Category extends StatelessWidget{
       // La propiedad child anida un widget en su interior
       // Usamos columna para ordenar un ListTile y una fila con botones
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
 
           // Usamos ListTile para ordenar la información del card como titulo, subtitulo e icono
           ListTile(
               contentPadding: EdgeInsets.fromLTRB(15, 10, 25, 0),
-              title: Text('${this.categoria}'),
-          )],
+              title: new Center(child: new Text('${this.categoria}')),
+          ),
+        ],
       ),
+
     );
   }
 }

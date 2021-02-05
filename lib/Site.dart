@@ -16,7 +16,6 @@ class Site extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Card(
 
       // Con esta propiedad modificamos la forma de nuestro card

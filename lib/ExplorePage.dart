@@ -8,8 +8,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:floating_search_bar/floating_search_bar.dart';
-import 'package:flutter/services.dart';
 
 
 class ExplorePage extends StatefulWidget {
