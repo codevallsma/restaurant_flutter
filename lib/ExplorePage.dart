@@ -37,12 +37,19 @@ class _ExplorePage extends State<ExplorePage> {
     _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
       ..addListener(_onScroll);
     submit();
+    _getCurrentLocation();
   }
 
 
   _getCurrentLocation() async {
     _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
-        _currentPosition = value;
+      _currentPosition = value;
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+              target: LatLng(_currentPosition.latitude, _currentPosition.longitude), zoom: 16.0),
+        ),
+      );
     });
   }
 
@@ -219,25 +226,6 @@ class _ExplorePage extends State<ExplorePage> {
                       _changeMapType();
                       print('Changing the Map Type');
                     }),
-                /*FloatingSearchBar.builder(
-                  itemCount: 100,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      leading: Text(index.toString()),
-                    );
-                  },
-                  trailing: CircleAvatar(
-                    child: Text("RD"),
-                  ),
-                  /*drawer: Drawer(
-                    child: Container(),
-                  ),*/
-                  onChanged: (String value) {},
-                  onTap: () {},
-                  decoration: InputDecoration.collapsed(
-                    hintText: "Search...",
-                  ),
-                ),*/
               ],
             ),
           ),
@@ -248,6 +236,15 @@ class _ExplorePage extends State<ExplorePage> {
 
   PageView _buildResults(List<Restaurant> restaurantResults){
     restaurants = restaurantResults;
+    restaurantResults.forEach((restaurant) {
+      //adding the marker
+      this._markers.add(Marker(
+          markerId: MarkerId(restaurant.id.toString()),
+          draggable: false,
+          infoWindow:
+          InfoWindow(title: restaurant.restaurantName, snippet: restaurant.emplacamament),
+          position: restaurant.locationCords()));
+    });
     return PageView.builder(
       controller: _pageController,
       itemCount: restaurants.length,
@@ -255,38 +252,5 @@ class _ExplorePage extends State<ExplorePage> {
         return _coffeeShopList(index);
       },
     );
-  }
-  _getMarkers() async {
-    _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
-      _currentPosition = value;
-      restaurants = [];
-      this._markers.clear();
-      Provider.of<ApiService>(context, listen: false)
-          .getKNearestRestaurants(_currentPosition.latitude, _currentPosition.longitude,4, SingletonApiToken().getTokenHeader())
-          .then((restaurantsList){
-        restaurantsList.forEach((restaurant) {
-          //adding the marker
-          this._markers.add(Marker(
-              markerId: MarkerId(restaurant.id.toString()),
-              draggable: false,
-              infoWindow:
-              InfoWindow(title: restaurant.restaurantName, snippet: restaurant.emplacamament),
-              position: restaurant.locationCords()));
-          // storing the nearby restaurants
-          restaurants.add(restaurant);
-        });
-        _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
-          ..addListener(_onScroll);
-      }).catchError((onError){
-        Fluttertoast.showToast(
-            msg: "Error on receiving user data ",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Theme.of(context).primaryColor,
-            textColor: Colors.white,
-            timeInSecForIosWeb: 1
-        );
-      });
-    });
   }
 }
