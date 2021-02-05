@@ -142,6 +142,7 @@ class _ExplorePage extends State<ExplorePage> {
                                           "https://media-cdn.tripadvisor.com/media/photo-s/05/9a/1e/25/image-restaurant.jpg"),
                                       fit: BoxFit.cover))),
                           SizedBox(width: 5.0),
+                          Expanded(child:
                           Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,6 +169,8 @@ class _ExplorePage extends State<ExplorePage> {
                                   ),
                                 )
                               ])
+
+                          )
                         ]))))
           ])),
     );
