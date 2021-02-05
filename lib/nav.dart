@@ -1,4 +1,5 @@
 import 'package:api_example/ExplorePage.dart';
+import 'package:api_example/LoginOrSignUp.dart';
 import 'package:api_example/ProfilePage.dart';
 import 'package:api_example/SavedPage.dart';
 import 'package:api_example/SettingsPage.dart';
@@ -44,7 +45,7 @@ class _NavState extends State<Nav> {
             child: new IconButton(
                 icon: new Icon(Icons.logout),
                 onPressed: () {
-                  context.read<AuthenticationService>().signOut();
+                  Navigator.pushNamedAndRemoveUntil(context, "/LoginOrSignUp", (r) => false);
                 }),
           )
         ],

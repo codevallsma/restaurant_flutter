@@ -26,18 +26,28 @@ class _ExplorePage extends State<ExplorePage> {
   PageController _pageController;
   int prevPage;
   List<Restaurant> restaurants = [];
+  Future<List<Restaurant>> restaurantList;
 
   @override
   void initState() {
     super.initState();
+    //_getMarkers();
     _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
       ..addListener(_onScroll);
+    submit();
+    _getCurrentLocation();
   }
 
 
   _getCurrentLocation() async {
     _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
-        _currentPosition = value;
+      _currentPosition = value;
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+              target: LatLng(_currentPosition.latitude, _currentPosition.longitude), zoom: 16.0),
+        ),
+      );
     });
   }
 
@@ -59,9 +69,22 @@ class _ExplorePage extends State<ExplorePage> {
   moveCamera() {
     mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: restaurants[_pageController.page.toInt()].locationCords(),
-        zoom: 50.0,
+        zoom: 16.0,
         bearing: 45.0,
         tilt: 45.0)));
+  }
+  void submit() async {
+    _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
+      _currentPosition = value;
+      restaurants = [];
+      this._markers.clear();
+      Future<List<Restaurant>> restas = Provider.of<ApiService>(context, listen: false)
+          .getKNearestRestaurants(_currentPosition.latitude, _currentPosition.longitude,4, SingletonApiToken().getTokenHeader());
+      setState(() {
+        restaurantList = restas;
+      });
+      return;
+    });
   }
   _coffeeShopList(index) {
     return AnimatedBuilder(
@@ -171,20 +194,21 @@ class _ExplorePage extends State<ExplorePage> {
             child: Container(
               height: 200.0,
               width: MediaQuery.of(context).size.width,
-              child: FutureBuilder(
-                    future: _getMarkers(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot){
-                      _getCurrentLocation();
+              child:restaurantList ==null ? Container(
+                              alignment: FractionalOffset.center,
+                              child: CircularProgressIndicator())
+                  : FutureBuilder<List<Restaurant>>(
+                  future: restaurantList,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return _buildResults(snapshot.data.toList());
+                    } else {
+                      return Container(
+                          alignment: FractionalOffset.center,
+                          child: CircularProgressIndicator());
+                    }
+                  }),
 
-                      return PageView.builder(
-                        controller: _pageController,
-                        itemCount: restaurants.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return _coffeeShopList(index);
-                        },
-                      );
-                    },
-              ),
             ),
           ),
           Container(
@@ -200,25 +224,6 @@ class _ExplorePage extends State<ExplorePage> {
                       _changeMapType();
                       print('Changing the Map Type');
                     }),
-                /*FloatingSearchBar.builder(
-                  itemCount: 100,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      leading: Text(index.toString()),
-                    );
-                  },
-                  trailing: CircleAvatar(
-                    child: Text("RD"),
-                  ),
-                  /*drawer: Drawer(
-                    child: Container(),
-                  ),*/
-                  onChanged: (String value) {},
-                  onTap: () {},
-                  decoration: InputDecoration.collapsed(
-                    hintText: "Search...",
-                  ),
-                ),*/
               ],
             ),
           ),
@@ -227,38 +232,23 @@ class _ExplorePage extends State<ExplorePage> {
     );
   }
 
-  _getMarkers() async {
-    setState(() {
-
+  PageView _buildResults(List<Restaurant> restaurantResults){
+    restaurants = restaurantResults;
+    restaurantResults.forEach((restaurant) {
+      //adding the marker
+      this._markers.add(Marker(
+          markerId: MarkerId(restaurant.id.toString()),
+          draggable: false,
+          infoWindow:
+          InfoWindow(title: restaurant.restaurantName, snippet: restaurant.emplacamament),
+          position: restaurant.locationCords()));
     });
-    _currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation).then((value){
-      _currentPosition = value;
-      restaurants = [];
-      this._markers.clear();
-      Provider.of<ApiService>(context, listen: false)
-          .getKNearestRestaurants(_currentPosition.latitude, _currentPosition.longitude,4, SingletonApiToken().getTokenHeader())
-          .then((restaurantsList){
-        restaurantsList.forEach((restaurant) {
-          //adding the marker
-          this._markers.add(Marker(
-              markerId: MarkerId(restaurant.id.toString()),
-              draggable: false,
-              infoWindow:
-              InfoWindow(title: restaurant.restaurantName, snippet: restaurant.emplacamament),
-              position: restaurant.locationCords()));
-          // storing the nearby restaurants
-          restaurants.add(restaurant);
-        });
-      }).catchError((onError){
-        Fluttertoast.showToast(
-            msg: "Error on receiving user data ",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Theme.of(context).primaryColor,
-            textColor: Colors.white,
-            timeInSecForIosWeb: 1
-        );
-      });
-    });
+    return PageView.builder(
+      controller: _pageController,
+      itemCount: restaurants.length,
+      itemBuilder: (BuildContext context, int index) {
+        return _coffeeShopList(index);
+      },
+    );
   }
 }

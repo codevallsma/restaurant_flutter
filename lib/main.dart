@@ -25,7 +25,6 @@ void _setupLogging() {
 Future<void> main() async {
   _setupLogging();
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -37,12 +36,6 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<ApiService>(
         create: (context) => ApiService.create(),),
-        Provider<AuthenticationService>(
-          create: (_) => AuthenticationService(FirebaseAuth.instance),
-        ),
-        StreamProvider(
-          create: (context) => context.read<AuthenticationService>().authStateChanges,
-        )
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -51,7 +44,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: generateMaterialColor(Color.fromRGBO(55, 131, 148, 1)),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: AuthenticationWrapper(),
+        home: LoginOrSignUp(),
         routes: {
           // When navigating to the "/" route, build the FirstScreen widget.
           '/SignIn': (context) => SignIn(),
@@ -60,21 +53,10 @@ class MyApp extends StatelessWidget {
           '/ExplorePage': (context) => ExplorePage(),
           '/Nav': (context) => Nav(),
           '/Splash': (context) => SplashScreen(),
+          '/LoginOrSignUp': (context) => LoginOrSignUp(),
         },
       ),
     );
-  }
-}
-
-class AuthenticationWrapper extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User>();
-    log('data: $firebaseUser');
-    if (firebaseUser != null) {
-      return ExplorePage();
-    }
-    return LoginOrSignUp();
   }
 }
 
