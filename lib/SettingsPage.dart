@@ -184,7 +184,7 @@ class SettingsPage extends StatelessWidget {
                   },
                   splashColor: Color.fromRGBO(55, 131, 148, 1),
             )),
-
+            SizedBox(height: 20.0),
             Container(
               height: 40.0,
               color: Colors.transparent,
