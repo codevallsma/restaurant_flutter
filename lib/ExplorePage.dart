@@ -168,6 +168,7 @@ class _ExplorePage extends State<ExplorePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                          Expanded(child:
                                 Row(children: [
                                   Text(
                                     restaurants[index].restaurantName,
@@ -176,7 +177,7 @@ class _ExplorePage extends State<ExplorePage> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   IconButton(icon: icona, onPressed: () => _buttonPressed(index)),
-                                ],),
+                                ],)),
                                 Text(
                                   restaurants[index].emplacamament,
                                   style: TextStyle(
