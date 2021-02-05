@@ -35,7 +35,6 @@ class _ExplorePage extends State<ExplorePage> {
     _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
       ..addListener(_onScroll);
     submit();
-    _getCurrentLocation();
   }
 
 
@@ -53,6 +52,7 @@ class _ExplorePage extends State<ExplorePage> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController=controller;
+    _getCurrentLocation();
   }
 
   void _changeMapType() {
@@ -86,7 +86,7 @@ class _ExplorePage extends State<ExplorePage> {
       return;
     });
   }
-  _coffeeShopList(index) {
+  _restaurantList(index) {
     return AnimatedBuilder(
       animation: _pageController,
       builder: (BuildContext context, Widget widget) {
@@ -247,7 +247,7 @@ class _ExplorePage extends State<ExplorePage> {
       controller: _pageController,
       itemCount: restaurants.length,
       itemBuilder: (BuildContext context, int index) {
-        return _coffeeShopList(index);
+        return _restaurantList(index);
       },
     );
   }
