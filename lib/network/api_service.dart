@@ -58,11 +58,11 @@ abstract class ApiService {
 
   //gets all the liked restaurants
   @GET("restaurantLikes/{userID}")
-  Future<List<Restaurant>> getLikedRestaurants(@Path("userID") double userId, @Header("Authorization") String header);
+  Future<List<Restaurant>> getLikedRestaurants(@Path("userID") int userId, @Header("Authorization") String header);
 
   //gets all the liked restaurants given category
   @GET("restaurantLikesCategory/{userID}")
-  Future<List<Restaurant>> getLikedRestaurantsByCategory(@Path("userID") double userId, @Query("categoryID") double categoryID, @Header("Authorization") String header);
+  Future<List<Restaurant>> getLikedRestaurantsByCategory(@Path("userID") int userId, @Query("categoryID") int categoryID, @Header("Authorization") String header);
 
   // posts the liked restaurant
   @POST("restaurantLikes/{userID}/{restaurantID}")

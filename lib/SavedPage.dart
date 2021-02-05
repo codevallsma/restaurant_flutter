@@ -2,6 +2,7 @@ import 'package:api_example/Category.dart';
 import 'package:api_example/Site.dart';
 import 'package:api_example/network/api_service.dart';
 import 'package:api_example/network/model/SingletonApiToken.dart';
+import 'package:api_example/network/model/SingletonUserDetails.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -108,13 +109,14 @@ class _SavedPage extends State<SavedPage> {
           padding: EdgeInsets.all(8.0),
           itemCount: _categories.length,
           itemBuilder: (BuildContext context, int index) {
-            return Category(_categories[index].id, _categories[index].categoria);
+            return Category(_categories[index].id, _categories[index].categoria,
+                _categories[index].numRestaurants);
           },
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, crossAxisSpacing: 5.0, mainAxisSpacing: 5.0),
         ),
       );
-    }else{
+    } else {
       return new Flexible(
         child: ListView.builder(
             padding: EdgeInsets.all(8.0),
@@ -147,7 +149,7 @@ class _SavedPage extends State<SavedPage> {
         }
       }
       return _createFilteredListView();
-    }else{
+    } else {
       for (int i = 0; i < _sites.length; i++) {
         if (_sites[i]
             .nomRestaurant
@@ -168,13 +170,16 @@ class _SavedPage extends State<SavedPage> {
           padding: EdgeInsets.all(8.0),
           itemCount: _filteredCategories.length,
           itemBuilder: (BuildContext context, int index) {
-            return Category(_filteredCategories[index].id, _filteredCategories[index].categoria);
+            return Category(
+                _filteredCategories[index].id,
+                _filteredCategories[index].categoria,
+                _filteredCategories[index].numRestaurants);
           },
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, crossAxisSpacing: 5.0, mainAxisSpacing: 5.0),
         ),
       );
-    }else{
+    } else {
       return new Flexible(
         child: ListView.builder(
             padding: EdgeInsets.all(8.0),
@@ -193,32 +198,54 @@ class _SavedPage extends State<SavedPage> {
   }
 
   void readCategories(BuildContext context) {
+    Category aux;
+
     _categories.removeRange(0, _categories.length);
     Provider.of<ApiService>(context, listen: false)
         .getAllCategories(SingletonApiToken().getTokenHeader())
         .then((categoriesList) {
       for (int i = 0; i < categoriesList.length; i++) {
-        _categories.add(
-            new Category(categoriesList[i].id, categoriesList[i].categoria));
+        Provider.of<ApiService>(context, listen: false)
+            .getLikedRestaurantsByCategory(SingletonUserDetails().id,
+                categoriesList[i].id, SingletonApiToken().getTokenHeader())
+            .then((restaurantListPerCategory) {
+          _categories.add(new Category(categoriesList[i].id,
+              categoriesList[i].categoria, restaurantListPerCategory.length));
+          if (_categories.length == categoriesList.length) {
+            for (int i = 0; i < _categories.length; ++i) {
+              for (int j = i + 1; j < _categories.length; ++j) {
+                if (_categories[i].numRestaurants <
+                    _categories[j].numRestaurants) {
+                  aux = _categories[i];
+                  _categories[i] = _categories[j];
+                  _categories[j] = aux;
+                }
+              }
+            }
+          }
+        });
       }
     });
   }
 
   void readSites(BuildContext context) {
-    _sites.add(new Site(
-        'Terrasses en Via Pública',
-        'Carrer de Sant Joan de la Salle, 42, 08022 Barcelona',
-        2,
-        4,
-        5.2,
-        'El xili'));
-    _sites.add(new Site(
-        'Terrasses en Espai Privat d\'Ús Públic',
-        'Passeig de Sant Gervasi, 47, 08022 Barcelona',
-        4,
-        8,
-        11.4,
-        'El Chikilicuatre'));
+    _sites.removeRange(0, _sites.length);
+    Provider.of<ApiService>(context, listen: false)
+        .getLikedRestaurants(
+            SingletonUserDetails().id, SingletonApiToken().getTokenHeader())
+        .then((sitesList) {
+      setState(() {
+        for (int i = 0; i < sitesList.length; i++) {
+          _sites.add(new Site(
+              sitesList[i].ocupacio,
+              sitesList[i].emplacamament,
+              sitesList[i].taules,
+              sitesList[i].cadires,
+              sitesList[i].superficieOcupada,
+              sitesList[i].restaurantName));
+        }
+      });
+    });
   }
 
   Expanded listTye() {
@@ -242,7 +269,8 @@ class _SavedPage extends State<SavedPage> {
         padding: EdgeInsets.all(8.0),
         itemCount: _categories.length,
         itemBuilder: (BuildContext context, int index) {
-          return Category(_categories[index].id, _categories[index].categoria);
+          return Category(_categories[index].id, _categories[index].categoria,
+              _categories[index].numRestaurants);
         },
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, crossAxisSpacing: 5.0, mainAxisSpacing: 5.0),

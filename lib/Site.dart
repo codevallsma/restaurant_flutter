@@ -40,7 +40,8 @@ class Site extends StatelessWidget{
             contentPadding: EdgeInsets.fromLTRB(15, 10, 25, 0),
             title: Text('${this.nomRestaurant}'),
             subtitle: Text('${this.emplacament}'),
-            leading: printLeading()
+            leading: printLeading(),
+            //trailing: printTrailing(),
           ),
 
           // Usamos una fila para ordenar los botones del card
@@ -59,6 +60,8 @@ class Site extends StatelessWidget{
       ),
     );
   }
+
+
 
   Icon printLeading(){
     if(this.ocupacio == public){
