@@ -123,6 +123,7 @@ class _SavedPage extends State<SavedPage> {
             itemCount: _sites.length,
             itemBuilder: (BuildContext context, int index) {
               return Site(
+                  _sites[index].id,
                   _sites[index].ocupacio,
                   _sites[index].emplacament,
                   _sites[index].taules,
@@ -186,6 +187,7 @@ class _SavedPage extends State<SavedPage> {
             itemCount: _filteredSites.length,
             itemBuilder: (BuildContext context, int index) {
               return Site(
+                  _filteredSites[index].id,
                   _filteredSites[index].ocupacio,
                   _filteredSites[index].emplacament,
                   _filteredSites[index].taules,
@@ -237,6 +239,7 @@ class _SavedPage extends State<SavedPage> {
       setState(() {
         for (int i = 0; i < sitesList.length; i++) {
           _sites.add(new Site(
+              sitesList[i].id,
               sitesList[i].ocupacio,
               sitesList[i].emplacamament,
               sitesList[i].taules,
@@ -256,6 +259,7 @@ class _SavedPage extends State<SavedPage> {
               itemCount: _sites.length,
               itemBuilder: (BuildContext context, int index) {
                 return Site(
+                    _sites[index].id,
                     _sites[index].ocupacio,
                     _sites[index].emplacament,
                     _sites[index].taules,

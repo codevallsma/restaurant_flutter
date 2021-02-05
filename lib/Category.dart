@@ -67,6 +67,7 @@ class Category extends StatelessWidget {
         .then((sitesList) {
       for (int i = 0; i < sitesList.length; i++) {
         _sites.add(new Site(
+            sitesList[i].id,
             sitesList[i].ocupacio,
             sitesList[i].emplacamament,
             sitesList[i].taules,
@@ -85,6 +86,7 @@ class Category extends StatelessWidget {
                 itemCount: _sites.length,
                 itemBuilder: (BuildContext buildContext, int index) {
                   return Site(
+                      _sites[index].id,
                       _sites[index].ocupacio,
                       _sites[index].emplacament,
                       _sites[index].taules,

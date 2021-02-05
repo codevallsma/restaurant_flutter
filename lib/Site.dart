@@ -1,8 +1,12 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class Site extends StatelessWidget{
+import 'network/api_service.dart';
+import 'network/model/SingletonApiToken.dart';
+import 'network/model/SingletonUserDetails.dart';
+
+class Site extends StatefulWidget {
+  final int id;
   final String ocupacio;
   final String emplacament;
   final int taules;
@@ -10,14 +14,52 @@ class Site extends StatelessWidget{
   final double superficie;
   final String nomRestaurant;
 
+  Site(this.id, this.ocupacio, this.emplacament, this.taules, this.cadires,
+      this.superficie, this.nomRestaurant);
+
+  _Site createState() => _Site(this.id, this.ocupacio, this.emplacament,
+      this.taules, this.cadires, this.superficie, this.nomRestaurant);
+}
+
+class _Site extends State<Site> {
+  final int id;
+  final String ocupacio;
+  final String emplacament;
+  final int taules;
+  final int cadires;
+  final double superficie;
+  final String nomRestaurant;
+
+  bool isPressed = false;
+  Icon icona = new Icon(Icons.star_border);
+
   static final String public = 'Terrasses en Via Pública';
 
-  Site(this.ocupacio, this.emplacament, this.taules, this.cadires, this.superficie, this.nomRestaurant);
+  _Site(this.id, this.ocupacio, this.emplacament, this.taules, this.cadires,
+      this.superficie, this.nomRestaurant);
+
+  void initState() {
+    super.initState();
+
+    Provider.of<ApiService>(context, listen: false)
+        .getLikedRestaurants(
+            SingletonUserDetails().id, SingletonApiToken().getTokenHeader())
+        .then((sitesList) {
+      for (int i = 0; i < sitesList.length; i++) {
+        if (sitesList[i].id == this.id) {
+          isPressed = true;
+          setState(() {
+            icona = new Icon(Icons.star);
+          });
+          break;
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-
       // Con esta propiedad modificamos la forma de nuestro card
       // Aqui utilizo RoundedRectangleBorder para proporcionarle esquinas circulares al Card
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -34,14 +76,13 @@ class Site extends StatelessWidget{
       // Usamos columna para ordenar un ListTile y una fila con botones
       child: Column(
         children: <Widget>[
-
           // Usamos ListTile para ordenar la información del card como titulo, subtitulo e icono
           ListTile(
             contentPadding: EdgeInsets.fromLTRB(15, 10, 25, 0),
             title: Text('${this.nomRestaurant}'),
             subtitle: Text('${this.emplacament}'),
             leading: printLeading(),
-            //trailing: printTrailing(),
+            trailing: IconButton(icon: icona, onPressed: _buttonPressed()),
           ),
 
           // Usamos una fila para ordenar los botones del card
@@ -61,14 +102,72 @@ class Site extends StatelessWidget{
     );
   }
 
+  _buttonPressed() {
+    isPressed = !isPressed;
+    if (isPressed) {
+      setState(() {
+        icona = new Icon(Icons.star);
+      });
+      Provider.of<ApiService>(context, listen: false).postLikedRestaurant(
+          SingletonUserDetails().id,
+          this.id,
+          SingletonApiToken().getTokenHeader());
+    } else {
+      setState(() {
+        icona = new Icon(Icons.star_border);
+      });
+      icona = new Icon(Icons.star_border);
+      Provider.of<ApiService>(context, listen: false).deleteLikedRestaurant(
+          SingletonUserDetails().id,
+          this.id,
+          SingletonApiToken().getTokenHeader());
+    }
+  }
 
-
-  Icon printLeading(){
-    if(this.ocupacio == public){
+  Icon printLeading() {
+    if (this.ocupacio == public) {
       return Icon(Icons.public);
-    }else{
+    } else {
       return Icon(Icons.public_off);
     }
   }
 
+/*
+  IconButton printTrailing(BuildContext context) {
+    Icon icona = new Icon(Icons.star);
+    Provider.of<ApiService>(context, listen: false)
+        .getLikedRestaurants(
+            SingletonUserDetails().id, SingletonApiToken().getTokenHeader())
+        .then((sitesList) {
+      for (int i = 0; i < sitesList.length; i++) {
+        if (sitesList[i].id == this.id) {
+          icona = new Icon(Icons.star);
+          return IconButton(
+              icon: icona,
+              onPressed: () {
+                setState(() {
+                  icona = new Icon(Icons.star_border);
+                });
+                Provider.of<ApiService>(context, listen: false)
+                    .deleteLikedRestaurant(SingletonUserDetails().id, this.id,
+                        SingletonApiToken().getTokenHeader())
+                    .then((value) => null);
+              });
+        } else {
+          icona = new Icon(Icons.star_border);
+          return IconButton(
+              icon: icona,
+              onPressed: () {
+                setState(() {
+                  icona = new Icon(Icons.star);
+                });
+                Provider.of<ApiService>(context, listen: false)
+                    .postLikedRestaurant(SingletonUserDetails().id, this.id,
+                        SingletonApiToken().getTokenHeader())
+                    .then((value) => null);
+              });
+        }
+      }
+    });
+  }*/
 }

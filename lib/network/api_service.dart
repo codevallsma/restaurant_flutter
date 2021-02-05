@@ -66,10 +66,10 @@ abstract class ApiService {
 
   // posts the liked restaurant
   @POST("restaurantLikes/{userID}/{restaurantID}")
-  Future<List<Restaurant>> postLikedRestaurant(@Path("userID") double userId,@Path("restaurantID") double restaurantID, @Header("Authorization") String header);
+  Future<List<Restaurant>> postLikedRestaurant(@Path("userID") int userId,@Path("restaurantID") int restaurantID, @Header("Authorization") String header);
 
   // deletes the liked restaurant
   @DELETE("restaurantLikes/{userID}/{restaurantID}")
-  Future<List<Restaurant>> deleteLikedRestaurant(@Path("userID") double userId,@Path("restaurantID") double restaurantID, @Header("Authorization") String header);
+  Future<List<Restaurant>> deleteLikedRestaurant(@Path("userID") int userId,@Path("restaurantID") int restaurantID, @Header("Authorization") String header);
 
 }
