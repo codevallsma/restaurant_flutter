@@ -8,7 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-
+import 'dart:collection';
 import 'network/model/SingletonUserDetails.dart';
 
 
@@ -28,12 +28,13 @@ class _ExplorePage extends State<ExplorePage> {
   PageController _pageController;
   int prevPage;
   List<Restaurant> restaurants = [];
+  Map restaurantsLiked = new HashMap<int, int>();
 
   Future<List<Restaurant>> restaurantList;
 
   bool isPressed = false;
-  Icon icona = new Icon(Icons.star_border);
-
+  Icon iconaStarBorder = new Icon(Icons.star_border);
+  Icon iconaStarFilled = new Icon(Icons.star);
   @override
   void initState() {
     super.initState();
@@ -41,21 +42,6 @@ class _ExplorePage extends State<ExplorePage> {
     _pageController = PageController(initialPage: 1, viewportFraction: 0.8)
       ..addListener(_onScroll);
     submit();
-
-    Provider.of<ApiService>(context, listen: false)
-        .getLikedRestaurants(
-        SingletonUserDetails().id, SingletonApiToken().getTokenHeader())
-        .then((sitesList) {
-      for (int i = 0; i < sitesList.length; i++) {
-        if (sitesList[i].id == restaurants[i].id) {
-          isPressed = true;
-          setState(() {
-            icona = new Icon(Icons.star);
-          });
-          break;
-        }
-      }
-    });
   }
 
 
@@ -74,6 +60,14 @@ class _ExplorePage extends State<ExplorePage> {
   void _onMapCreated(GoogleMapController controller) {
     mapController=controller;
     _getCurrentLocation();
+    Provider.of<ApiService>(context, listen: false)
+        .getLikedRestaurants(
+        SingletonUserDetails().id, SingletonApiToken().getTokenHeader())
+        .then((sitesList) {
+      setState(() {
+        restaurantsLiked = new Map.fromIterable(sitesList, key: (v) => v.id, value: (v) => v.id);
+      });
+    });
   }
 
   void _changeMapType() {
@@ -168,7 +162,7 @@ class _ExplorePage extends State<ExplorePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                          Expanded(child:
+                                Expanded(child:
                                 Row(children: [
                                   Text(
                                     restaurants[index].restaurantName,
@@ -176,7 +170,7 @@ class _ExplorePage extends State<ExplorePage> {
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  IconButton(icon: icona, onPressed: () => _buttonPressed(index)),
+                                  IconButton(icon: restaurantsLiked.containsKey(restaurants[index].id)? iconaStarFilled :  iconaStarBorder, onPressed: () => _buttonPressed(index)),
                                 ],)),
                                 Text(
                                   restaurants[index].emplacamament,
@@ -222,8 +216,8 @@ class _ExplorePage extends State<ExplorePage> {
               height: 200.0,
               width: MediaQuery.of(context).size.width,
               child:restaurantList ==null ? Container(
-                              alignment: FractionalOffset.center,
-                              child: CircularProgressIndicator())
+                  alignment: FractionalOffset.center,
+                  child: CircularProgressIndicator())
                   : FutureBuilder<List<Restaurant>>(
                   future: restaurantList,
                   builder: (context, snapshot) {
@@ -260,44 +254,29 @@ class _ExplorePage extends State<ExplorePage> {
   }
 
   _buttonPressed(int index) {
-    isPressed = !isPressed;
-    if (isPressed) {
-      setState(() {
-        icona = new Icon(Icons.star);
-      });
-      Provider.of<ApiService>(context, listen: false).postLikedRestaurant(
-          SingletonUserDetails().id,
-          this.restaurants[index].id,
-          SingletonApiToken().getTokenHeader());
-    } else {
-      setState(() {
-        icona = new Icon(Icons.star_border);
-      });
+    if(restaurantsLiked.containsKey(index)){
       Provider.of<ApiService>(context, listen: false).deleteLikedRestaurant(
           SingletonUserDetails().id,
           this.restaurants[index].id,
-          SingletonApiToken().getTokenHeader());
+          SingletonApiToken().getTokenHeader()).then((value) =>
+          setState(() {
+            restaurantsLiked.remove(this.restaurants[index].id);
+          })
+      );
+    } else{
+      Provider.of<ApiService>(context, listen: false).postLikedRestaurant(
+          SingletonUserDetails().id,
+          this.restaurants[index].id,
+          SingletonApiToken().getTokenHeader()).then((value) =>
+          setState(() {
+            restaurantsLiked.putIfAbsent(this.restaurants[index].id,() =>this.restaurants[index].id);
+          })
+      );
     }
   }
 
   PageView _buildResults(List<Restaurant> restaurantResults){
     restaurants = restaurantResults;
-
-    Provider.of<ApiService>(context, listen: false)
-        .getLikedRestaurants(
-        SingletonUserDetails().id, SingletonApiToken().getTokenHeader())
-        .then((sitesList) {
-      for (int i = 0; i < sitesList.length; i++) {
-        if (sitesList[i].id == restaurants[i].id) {
-          isPressed = true;
-          setState(() {
-            icona = new Icon(Icons.star);
-          });
-          break;
-        }
-      }
-    });
-
     restaurantResults.forEach((restaurant) {
       //adding the marker
       this._markers.add(Marker(
