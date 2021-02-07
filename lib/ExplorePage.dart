@@ -193,7 +193,27 @@ class _ExplorePage extends State<ExplorePage> {
           ])),
     );
   }
-
+  _buttonPressed(int index) {
+    if(restaurantsLiked.containsKey(this.restaurants[index].id)){
+      Provider.of<ApiService>(context, listen: false).deleteLikedRestaurant(
+          SingletonUserDetails().id,
+          this.restaurants[index].id,
+          SingletonApiToken().getTokenHeader()).then((value) =>
+          setState(() {
+            restaurantsLiked.remove(this.restaurants[index].id);
+          })
+      );
+    } else{
+      Provider.of<ApiService>(context, listen: false).postLikedRestaurant(
+          SingletonUserDetails().id,
+          this.restaurants[index].id,
+          SingletonApiToken().getTokenHeader()).then((value) =>
+          setState(() {
+            restaurantsLiked.putIfAbsent(this.restaurants[index].id,() =>this.restaurants[index].id);
+          })
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -251,28 +271,6 @@ class _ExplorePage extends State<ExplorePage> {
         ],
       ),
     );
-  }
-
-  _buttonPressed(int index) {
-    if(restaurantsLiked.containsKey(index)){
-      Provider.of<ApiService>(context, listen: false).deleteLikedRestaurant(
-          SingletonUserDetails().id,
-          this.restaurants[index].id,
-          SingletonApiToken().getTokenHeader()).then((value) =>
-          setState(() {
-            restaurantsLiked.remove(this.restaurants[index].id);
-          })
-      );
-    } else{
-      Provider.of<ApiService>(context, listen: false).postLikedRestaurant(
-          SingletonUserDetails().id,
-          this.restaurants[index].id,
-          SingletonApiToken().getTokenHeader()).then((value) =>
-          setState(() {
-            restaurantsLiked.putIfAbsent(this.restaurants[index].id,() =>this.restaurants[index].id);
-          })
-      );
-    }
   }
 
   PageView _buildResults(List<Restaurant> restaurantResults){
