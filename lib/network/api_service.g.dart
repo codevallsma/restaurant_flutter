@@ -239,16 +239,14 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<List<Restaurant>> postLikedRestaurant(
-      userId, restaurantID, header) async {
+  Future<void> postLikedRestaurant(userId, restaurantID, header) async {
     ArgumentError.checkNotNull(userId, 'userId');
     ArgumentError.checkNotNull(restaurantID, 'restaurantID');
     ArgumentError.checkNotNull(header, 'header');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<List<dynamic>>(
-        'restaurantLikes/$userId/$restaurantID',
+    await _dio.request<void>('restaurantLikes/$userId/$restaurantID',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -256,10 +254,7 @@ class _ApiService implements ApiService {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    var value = _result.data
-        .map((dynamic i) => Restaurant.fromJson(i as Map<String, dynamic>))
-        .toList();
-    return value;
+    return null;
   }
 
   @override

@@ -164,12 +164,12 @@ class _ExplorePage extends State<ExplorePage> {
                               children: [
                                 Expanded(child:
                                 Row(children: [
-                                  Text(
+                                  Expanded(child: Text(
                                     restaurants[index].restaurantName,
                                     style: TextStyle(
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.bold),
-                                  ),
+                                  )),
                                   IconButton(icon: restaurantsLiked.containsKey(restaurants[index].id)? iconaStarFilled :  iconaStarBorder, onPressed: () => _buttonPressed(index)),
                                 ],)),
                                 Text(
