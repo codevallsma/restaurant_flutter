@@ -1,16 +1,2 @@
-# api_example
-
-API Example Project by Soe Thiha Naung
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# FLUTTER UI FOR CHECKING RESTAURANTS IN A MAP
+UI implementation that allows you to see all the restaurants with a terrace and their capacity in Barcelona in a map.<br> It also allows you to save and filter them by categories.<br> This UI implementation works with the self [self created backend posted in my github](https://github.com/codevallsma/Backend_RestaurantFlutter)
